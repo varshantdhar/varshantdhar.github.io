@@ -8,17 +8,12 @@ tags:
     - self-attention
     - mobilenet
 ---
-# ConvAttention
-## Marrying Convolution and Attention
-
-[CoAtNet: Marrying Convolution and Attention for All Data Sizes](https://proceedings.neurips.cc/paper/2021/file/20568692db622456cc42a2e853ca21f8-Paper.pdf)
-
-## Summary
-
-While Transformers tend to have larger model capacity, their generalization can be worse than convuktional networks due to the lack of the right inductive bias. The paper above proposes a hybrid model that assumes:
+While Transformers tend to have larger model capacity, their generalization can be worse than convolutional networks due to the lack of the right inductive bias. The paper above proposes a hybrid model that assumes:
 
 - depthwise convolution and self-attention can be naturally unified via simple relative attention
 - vertically stacking convolution layers and attention layers is effective at improving generalization, capacity and efficiency
+
+[CoAtNet: Marrying Convolution and Attention for All Data Sizes](https://proceedings.neurips.cc/paper/2021/file/20568692db622456cc42a2e853ca21f8-Paper.pdf)
 
 ## Model
 

@@ -8,15 +8,12 @@ tags:
     - Swish
     - Activation
 ---
-
-# Searching for Activation Functions
-
-[Searching for Activation Functions](https://arxiv.org/pdf/1710.05941.pdf?ref=paperspace-blog)
-
 ReLU, defined as $f(x) = \max(0, x)$ was a breakthrough that enabled the fully supervised training of state-of-the-art deep neural networks. Deep networks with ReLU are more easily optimized than sigmoid or tanh units, because gradients are able to flow when the input to the ReLU function is positive. Thanks to its simplicity and effectiveness, ReLU has
 become the default activation function used across the deep learning community.
 
 In this paper, the authors propose to use automated search techniques to discover novel activation functions. They focus on finding new scalar activation functions, which take in as input a scalar and output a scalar, because scalar activation functions can be used to replace the ReLU function without changing the network architecture. 
+
+[Searching for Activation Functions](https://arxiv.org/pdf/1710.05941.pdf?ref=paperspace-blog)
 
 ## Search Space
 

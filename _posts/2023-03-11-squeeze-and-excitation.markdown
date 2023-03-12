@@ -10,10 +10,6 @@ tags:
     - adaptive_calibration
     - feature_representation
 ---
-# Squeeze-and-Excitation Blocks
-
-[Squeeze and Excitation Networks](https://arxiv.org/pdf/1709.01507.pdf)
-
 A unit of a transformation $F_{tr}$ mapping an input $$ X \in \R^{H \times W \times C} $$ to feature maps $$ U \in \R^{H^{'} \times W^{'} \times C^{'}} $$. Taking $$ F_{tr} $$ to be a convolution operator and use $$ V = [v_1, v_2, \cdots, v_{C}] $$ to denote the learned set of filter, kernels, where $v_c$ refers to the parameters of the $c$-th filter. We can then write the outputs $$ U \in \R^{H^{'} \times W^{'} \times C^{'}} $$ as 
 
 $$ u_c = v_c * X = \sum_{s=1}^C v_c^s * x^s $$
@@ -21,6 +17,8 @@ $$ u_c = v_c * X = \sum_{s=1}^C v_c^s * x^s $$
 where $*$ denotes convolution and $v_c^s$ is a 2D spatial kernel representing a single channel of $v_c$ that acts on the corresponding channel of $X$. Since the output is a summation through all channels, channel dependecies are implicitly embedded in $v_c$, but are entangled with the local spatial correlation captured by the filters. The channel relationships modelled by convolution are inherently implicit and local. 
 
 The learning of convolutional features is expected to be enhanced by explicitly modelling channel interdependencies, so that the network is able to increase its sensitivity to informative features which can be exploited by subsequent transformations. Consequently, providing it with access to global information and recalibrate filter responses in  two steps, $\textit{squeeze}$ and $\textit{excitation}$, before they are fed into the next transformation. 
+
+[Squeeze and Excitation Networks](https://arxiv.org/pdf/1709.01507.pdf)
 
 
 ## Squeeze: Global Information Embedding

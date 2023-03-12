@@ -10,13 +10,7 @@ tags:
     - transformers
 ---
 
-# Layer Normalization
-
-[Layer Normalization](https://arxiv.org/pdf/1607.06450.pdf)
-
-Unlike batch normalization, layer normalization directly
-estimates the normalization statistics from the summed inputs to the neurons within a hidden layer
-so the normalization does not introduce any new dependencies between training cases. 
+Unlike batch normalization, layer normalization directly estimates the normalization statistics from the summed inputs to the neurons within a hidden layer so the normalization does not introduce any new dependencies between training cases. 
 
 Changes in the output of one layer will tend to cause highly correlated changes in the summed inputs to the next layer, especially with ReLU units whose outputs can change by a lot. This suggests the “covariate shift” problem can be reduced by fixing the mean and the variance of the summed inputs within each layer. Under layer normalization, all the hidden units in a layer share the same normalization terms $\mu$ and $\sigma$, but different training cases have different normalization terms. Unlike batch normalization, layer normaliztion does not impose any constraint on the size of a mini-batch and it can be used in
 the pure online regime with batch size 1. 
@@ -32,3 +26,5 @@ terms
 $$h^t = f[\frac{g}{\sigma^t} \odot (a^t - \mu^t) + b]$$
 $$ \mu^{l} = \frac{1}{H}\sum_{i=1}^H a_i^{l}$$
 $$ \sigma^{l} = \sqrt{\frac{1}{H}\sum_{i=1}^H (a_i^l - \mu^l)^2} $$
+
+[Layer Normalization](https://arxiv.org/pdf/1607.06450.pdf)
