@@ -1,0 +1,22 @@
+---
+title:  "Gaussian Error Linear Units"
+date:   2023-03-08
+categories:
+    - study
+tags: 
+    - GeLU
+    - ReLU
+    - Activation
+---
+
+[Gaussian Error Linear Units](https://arxiv.org/pdf/1606.08415.pdf)
+
+Deep nonlinear classfiers can face overfitting issues which lead to researchers deciding whether or not to include stochastic regularizers or noise to hidden layers or adding a dropout layer. This choice often remains separate from the activation fucntion itself. The stochastic regularizer dropout, and other pseudoensembles, can lead to marked accuracy increases by randomly altering some activation decisions through zero multiplication. 
+
+A GeLU unit multiplies the input by zero or one, but the values of this zero-one mask are stochastically determined while also being dependendent on the input. Specifically, we multiply the neuron input $x$ by $m \sim \text{Bernoulli}(\phi(x))$ where $\phi(x) = P(X \leq x), X \sim N(0,1)$ is the cumulative distribution function of the standard normal distribution. This distribution is chosen since neuron inputs tend to follow a normal distribution, especially with Batch Normalization layers in networks. Inputs have a higher probability of being "dropped" as $x$ decreases, so the transformation applied to $x$ is stochastic yet depends upon the input. 
+
+The Gaussian Error Linear Unit is defined as:
+
+$$ \text{GELU}(x) = xP(X \leq x) = x\phi(x) $$
+
+The non-linearity is the expected transformation of the stochastic regularizer on an input $x$ which loosely states that we scale $x$ by how much greater it is than other inputs. 
