@@ -1,6 +1,7 @@
 ---
 title:  "Learning to Forget by Expiring"
 date:   2023-03-06
+mathjax: true
 categories:
     - blog
 tags: 

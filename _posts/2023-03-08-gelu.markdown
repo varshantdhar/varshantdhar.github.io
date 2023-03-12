@@ -1,6 +1,7 @@
 ---
 title:  "Gaussian Error Linear Units"
 date:   2023-03-08
+mathjax: true
 categories:
     - study
 tags: 
