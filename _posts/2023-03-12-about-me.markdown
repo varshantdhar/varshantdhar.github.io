@@ -2,7 +2,6 @@
 layout: post
 title:  "Varshant Dhar's Reading Notes"
 date:   2023-03-12 12:04:53 -0400
-categories: jekyll update
 ---
 # Paper notes
 This repository contains my research paper reading notes on deep learning and machine learning. NOTE: Some are incomplete as I work on these regularly.

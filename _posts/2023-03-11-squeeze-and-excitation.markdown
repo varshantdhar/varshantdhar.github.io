@@ -2,8 +2,6 @@
 title:  "Squeeze-and-Excitation Blocks"
 date:   2023-03-11
 mathjax: true
-categories:
-    - blog
 tags: 
     - convolution
     - spatial_encodings
