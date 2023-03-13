@@ -49,6 +49,6 @@ $$\tilde{x}_c = F_{scale}(u_c, s_c) = s_c u_c$$
 
 where $\tilde{X} = [\tilde{x_1},\tilde{x_2},\cdots,\tilde{x_c}]$ and $F_{scale}(u_c, s_c)$ refers to the channel-wise multiplication between the scalar $s_c$ and the feature map $u_c \in \mathbb{R}^{H \times W}$.
 
-Note, the excitation operator maps the input-specific descriptor $z$ to a set of channel weights. In this regard, SE blocks intrinsically introduce dynamics conditioned on the input, which can be regarded as a self0attention function on channels whose relationships are not confined to the local receptive field the convolution filters are repsonsive to. 
+Note, the excitation operator maps the input-specific descriptor $z$ to a set of channel weights. In this regard, SE blocks intrinsically introduce dynamics conditioned on the input, which can be regarded as a self-attention function on channels whose relationships are not confined to the local receptive field the convolution filters are repsonsive to. 
 
 ![alt]({{ site.url }}{{ site.baseurl }}/assets/images/squeeze-and-excitation-blocks/seblocks.png)

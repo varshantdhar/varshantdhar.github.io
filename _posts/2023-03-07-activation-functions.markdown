@@ -41,9 +41,8 @@ SWISH is defined as $x \cdot \sigma(\beta x)$ where $\sigma(z) = (1 + \exp(-z))^
 
 Like ReLU, Swish is unbounded above and bounded below. Unlike ReLU, Swish is smooth and nonmonotonic. In fact, the non-monotonicity property of Swish distinguishes itself from most common activation functions. 
 
-<figure>
-<img src="assets/images/searching-for-activation-functions/swish-activation-first-deriv.png">
-</figure>
+![alt]({{ site.url }}{{ site.baseurl }}/assets/images/searching-for-activation-functions/swish-activation-first-deriv.png)
+
 
 When $\beta = 1$, the derivative of Swish has magnitude less than 1 for inputs that are less than around 1.25. Thus, the success of Swish with $\beta = 1$ implies that the gradient preserving property of ReLU (i.e. having a derivative of 1 when $x > 0$) may no longer be a distinct advantage in modern architectures. Practically, if Batch Normalization is used, the scale parameter should be set as Swish is not piecewise linear unlike ReLU. 
 
