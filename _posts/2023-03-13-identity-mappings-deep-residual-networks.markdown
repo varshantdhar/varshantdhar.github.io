@@ -24,7 +24,10 @@ If $f$ is also an identity mapping $x_{l+1} \equiv y_l$ we could create a recurs
 
 $$ x_L = x_l + \sum_{i=1}^{L-1} F(x_i, W_i) $$
 
-for any deeper unit $L$ and any shallower unit $l$ indicating that the model is in a residual fashion between any units $L$ and $l$. Note that the feature $x_L = x_0 + \sum_{i=0}^{L-1} F(x_i, W_i)$ of any deep unit $L$ is the summation of the outputs of all preceding residual functions - in contrast to a plain network which is a series of matrix-vector products. This summation also leads to nice backpropagation properties:
+for any deeper unit $L$ and any shallower unit $l$ indicating that the model is in a residual fashion between any units $L$ and $l$. Note that the feature 
+$$ x_L = x_0 + \sum_{i=0}^{L-1} F(x_i, W_i) $$ 
+
+of any deep unit $L$ is the summation of the outputs of all preceding residual functions - in contrast to a plain network which is a series of matrix-vector products. This summation also leads to nice backpropagation properties:
 
 $$ \frac{\delta \epsilon}{\delta x_l} = \frac{\delta \epsilon}{\delta x_l} \frac{\delta x_L}{\delta x_l} = \frac{\delta \epsilon}{\delta x_l} (1 + \frac{\delta}{\delta x_l} \sum_{i=1}^{L-1} F(x_i, W_i) ) $$
 
