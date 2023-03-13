@@ -15,7 +15,10 @@ The key idea of ResNets is to learn the additive residual function with a key ch
 $$ y_l = h(x_l) + F(x_l, W_l), $$
 $$ x_{l+1} = f(y_l) $$
 
-where $x_l$ is the input feature to the $l$-th Residual Unit. $W_l = \{W_{l,k} |_{1 \leq k \leq K}\}$ is a set of weights associated with the $l$-th Residual Unit, and $K$ is the number of layers in a Residual Unit. $F$ denotes a stack of two $3 \times 3$ convolution layers as the residual function. The function $f$ is the ReLU operation after element-wise addition. The function $h$ is set as an identity mapping: $h(x_l) = x_l$. 
+where $x_l$ is the input feature to the $l$ -th Residual Unit. 
+$$ W_l = \{W_{l,k} |_{1 \leq k \leq K}\} $$ 
+
+is a set of weights associated with the $l$ -th Residual Unit, and $K$ is the number of layers in a Residual Unit. $F$ denotes a stack of two $3 \times 3$ convolution layers as the residual function. The function $f$ is the ReLU operation after element-wise addition. The function $h$ is set as an identity mapping: $h(x_l) = x_l$. 
 
 If $f$ is also an identity mapping $x_{l+1} \equiv y_l$ we could create a recursive operation where:
 
