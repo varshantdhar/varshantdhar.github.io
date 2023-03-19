@@ -55,3 +55,46 @@ For linear sequences, edges can capture information about the relative position 
 
 ### Merging Convolution and Self-Attention
 
+Note that both the feed-forward network module in a Transformer and mobilenet convolution blocks employ the design of "inverted bottleneck", which first expans the channel size of the input by 4x and later projects the 4x-wide hidden state back to the original channel size to enable residual connections. 
+
+Also, both depthwise convolution and self-attention can be expressed as a per-dimension weighted sum of values in a pre-defined receptive field. Specifically, convolution relies on a fixed kernel to gather information from a local receptive field
+
+$$ y_i = \sum_{j \in L(i)} w_{i-j} \odot x_j $$
+
+where $x_i, y_i \in \mathbb{R}^D $ are the input and output at position $i$ respectively, and $L(i)$ denotes a local neighborhood of $i$, e.e a 3x3 grid centered at $i$ in image processing.
+
+In comparison, self-attention allows the receptive field to be the entire spatial locations and computes the weights based on the re-normalized pairwise similarity between the pair $(x_i, x_j)$:
+
+$$ y_i = \sum_{j \in G} \frac{\exp(x_i^T x_j)}{\sum_{k \in G} \exp(x_i^Tx_k)} x_j $$
+
+where
+
+$$ A_{i,j} = \sum_{k \in G} \exp(x_i^Tx_k)  $$
+
+and $G$ indicates the global spatial space. Note that
+
+* The depthwise convolution kernel $w_{i-j}$ is an input-independent parameter of static value, while the attention weight $A_{i,j}$ dynamically depends on the representation of the input. Hence, it is much easier for the self-attention to capture complicated relational interactions between different spatial positions. However, the flexibility comes with a risk of easier overfitting, especially when data is limited.
+
+* Given any position pair $(i, j)$, the corresponding convolution weight $w_{i-j}$ only cares about the relative shift between them, i.e. $i  -j$, rather than the specific values of $i$ or $j$. This property is often referred to as translation equivalence, which has been found to improve generalization under datasets of limited size. 
+
+* Generally speaking, a larger receptive field provides more contextual information, which could lead to higher model capacity. Hence, the global receptive field has been a key motivation to employ self-attention in vision. However, a large receptive field requires significantly
+more computation.
+
+To aptly combine these desirable properties we could simply sum a global static convolution kerenel with the adaptive attention matrix, either after or before the Softmax normalization i.e.,
+
+$$y_i^{\text{post}} = \sum_{j \in G} (\frac{\exp(x_i^Tx_j)}{\sum_{k \in G} \exp(x_i^Tx_j)} + w_{i-j})x_j $$
+
+or 
+
+$$ y_i^{\text{pre}} = \sum_{j \in G}\frac{\exp(x_i^Tx_j + w_{i-j})}{\sum_{k \in G}\exp(x_i^Tx_k + w_{i-k})}x_j $$
+
+
+
+Notice that the pre-normalization version corresponds to variants of relative self-attention. Thus the attention weight $A_{i,j}$ is decided jointly by the $w_{i-j}$ of translation equivariance and the input-adaptive $x_i^Tx_j$, which can enjoy both effects depending on their relative magnitudes. 
+
+## Vertical Layout Design
+
+The global context has a quadratic complexity w.r.t. the spatial size. Hence, if we directly apply the relative attention to the raw image input, the computation will
+be excessively slow due to the large number of pixels in any image of common sizes. Thus the authors of the paper perform some down-sampling to reduce the spatial size and employ the global relative attention after the feature map reaches manageable level. 
+
+The down-sampling can be achieved by either (1) a convolution stem with aggressive stride (e.g., stride 16x16) as in ViT or (2) a multi-stage network with gradual pooling as in ConvNets. 

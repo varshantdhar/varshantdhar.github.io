@@ -20,6 +20,8 @@ Models are pretrained in a self-supervised phase and then fine-tuned for a parti
 
 In NLP, predicting the missing words involves computing a prediction score for every possible word in the vocabulary. While the vocabulary itself is large and predicting a missing word involves some uncertainty, it’s possible to produce a list of all the possible words in the vocabulary together with a probability estimate of the words’ appearance at that location.
 
+![alt]({{ site.url }}{{ site.baseurl }}/assets/images/self-supervised-intro/self-supervised.png)
+
 ### Unified view of self-supervised methods
 
 There is a way to think about SSL within the unified framework of an energy-based model (EBM). An EBM is a trainable system that, given two inputs, $x$ and y, tells us how incompatible they are with each other. To indicate the incompatibility between $x$ and y, the machine produces a single number, called an energy. If the energy is low, $x$ and $y$ are deemed compatible; if it is high, they are deemed incompatible.
@@ -29,6 +31,8 @@ Training an EBM consists of two parts: (1) showing it examples of $x$ and $y$ th
 ### Joint embedding, Siamese networks
 
 A joint embedding architecture is composed of two identical (or almost identical) copies of the same network. One network is fed with $x$ and the other with $y$. The networks produce output vectors called embeddings, which represent $x$ and $y$. A third module, joining the networks at the head, computes the energy as the distance between the two embedding vectors. When the model is shown distorted versions of the same image, the parameters of the networks can easily be adjusted so that their outputs move closer together. This will ensure that the network will produce nearly identical representations (or embedding) of an object, regardless of the particular view of that object.
+
+![alt]({{ site.url }}{{ site.baseurl }}/assets/images/self-supervised-intro/siamese-networks.jpeg)
 
 The difficulty is to make sure that the networks produce high energy, i.e. different embedding vectors, when $x$ and $y$ are different images. Without a specific way to do so, the two networks could happily ignore their inputs and always produce identical output embeddings. This phenomenon is called a collapse. When a collapse occurs, the energy is not higher for nonmatching $x$ and $y$ than it is for matching $x$ and $y$.
 
@@ -40,9 +44,16 @@ Contrastive methods are based on the simple idea of constructing pairs of $x$ an
 
 One starts for a complete segment of text $y$, then corrupts it, e.g., by masking some words to produce the observation $x$. The corrupted input is fed to a large neural network that is trained to reproduce the original text $y$. An uncorrupted text will be reconstructed as itself (low reconstruction error), while a corrupted text will be reconstructed as an uncorrupted version of itself (large reconstruction error). If one interprets the reconstruction error as an energy, it will have the desired property: low energy for “clean” text and higher energy for “corrupted” text.
 
+![alt]({{ site.url }}{{ site.baseurl }}/assets/images/self-supervised-intro/unified-view.png)
+
 A predictive architecture of this type can produce only a single prediction for a given input. Since the model must be able to predict multiple possible outcomes, the prediction is not a single set of words but a series of scores for every word in the vocabulary for each missing word location. However, we cannot enumerate all possible images so we must try other avenues for CV -- like latent-variable predictive architectures. 
 
-Latent-variable predictive models contain an extra input variable ($z$). With a properly trained model, as the latent variable varies over a given set, the output prediction varies over the set of plausible predictions compatible with the input $x$. These models can be trained with contrastive methods. For e.g. the generative adversarial network has a generator and discriminator network where the generator network is trained to produce contrastive samples to which the critic is trained to associate high energy. However, this is very inefficient to train and finding a set of contrastive images that cover all the ways they can differ from a given image is a nearly impossible task.
+Latent-variable predictive models contain an extra input variable ($z$). With a properly trained model, as the latent variable varies over a given set, the output prediction varies over the set of plausible predictions compatible with the input $x$. 
+
+![alt]({{ site.url }}{{ site.baseurl }}/assets/images/self-supervised-intro/latent-variable.jpeg)
+
+
+These models can be trained with contrastive methods. For e.g. the generative adversarial network has a generator and discriminator network where the generator network is trained to produce contrastive samples to which the critic is trained to associate high energy. However, this is very inefficient to train and finding a set of contrastive images that cover all the ways they can differ from a given image is a nearly impossible task.
 
 ### Non-contrastive energy-based SSL
 
