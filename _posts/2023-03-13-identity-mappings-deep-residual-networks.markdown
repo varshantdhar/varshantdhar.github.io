@@ -10,6 +10,8 @@ tags:
     - pre_activation
 ---
 
+![alt]({{ site.url }}{{ site.baseurl }}/assets/images/resnet-skip-connections/ResNet.png)
+
 The key idea of ResNets is to learn the additive residual function with a key choice of using an identity mapping. This is realized by attaching an identity skip connection. The original Residual Unit performs the following computation
 
 $$ y_l = h(x_l) + F(x_l, W_l), $$
