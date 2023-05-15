@@ -18,9 +18,9 @@ The primary contribution to this objective is a simple model and task-agnostic a
 
 MAML follows a two-step training process:
 
-1. In this step, the model's initial parameters are updated based on their performance on a set of validation tasks. The validation loss is used to assess the model's performance, and gradient descent is performed to update the parameters. The updated parameters form a new initialization that is more amenable to adaptation.$$ \theta' = \theta - \alpha \nabla_{\theta} \mathcal{L}_{\text{val}}(f_{\theta}) $$ Here, $\theta$ represents the initial model parameters, $\alpha$ is the step size for the outer loop update, and $\mathcal{L}_{\text{val}}(f_{\theta})$ is the validation loss of the model $f_{\theta}$.
+1. In this step, the model's initial parameters are updated based on their performance on a set of validation tasks. The validation loss is used to assess the model's performance, and gradient descent is performed to update the parameters. The updated parameters form a new initialization that is more amenable to adaptation.$$ \theta' = \theta - \alpha \nabla_{\theta} \mathbb{L}_{\text{val}}(f_{\theta}) $$ Here, $\theta$ represents the initial model parameters, $\alpha$ is the step size for the outer loop update, and $\mathbb{L}_{\text{val}}(f_{\theta})$ is the validation loss of the model $f_{\theta}$.
 
-2. The model's parameters are then fine-tuned on specific tasks within the training set using gradient descent. This step involves adapting the parameters to minimize the training loss on each task. The objective is to find a good set of parameters that can be easily adjusted to new tasks during the adaptation process.$$ \theta_i' = \theta - \beta \nabla_{\theta} \mathcal{L}_{\text{train}}(f_{\theta_i}) $$ Here, $\theta_i$ represents the model parameters after $i$ inner loop updates, $\beta$ is the step size for the inner loop update, and $\mathcal{L}_{\text{train}}(f_{\theta_i})$ is the training loss of the model $f_{\theta_i}$.
+2. The model's parameters are then fine-tuned on specific tasks within the training set using gradient descent. This step involves adapting the parameters to minimize the training loss on each task. The objective is to find a good set of parameters that can be easily adjusted to new tasks during the adaptation process.$$ \theta_i' = \theta - \beta \nabla_{\theta} \mathbb{L}_{\text{train}}(f_{\theta_i}) $$ Here, $\theta_i$ represents the model parameters after $i$ inner loop updates, $\beta$ is the step size for the inner loop update, and $\mathbb{L}_{\text{train}}(f_{\theta_i})$ is the training loss of the model $f_{\theta_i}$.
 
 Note that the meta-optimization is performed over the model parameters $\theta$, whereas the objective is computed using the updated model parameters $\theta'$. Thus, the proposed method aims to optimize the model parameters such that one or a small number of gradient steps on a new task will produce maximally effective behavior on that task.
 
@@ -44,14 +44,14 @@ The $\delta$–approximate Jacobian-vector product can be formulated as follows:
 Mathematically, this can be expressed as:
 
 $$
- \mathbf{J} \cdot \mathbf{v} \approx \frac{{\mathcal{L}(\theta - \alpha \delta \odot \nabla_{\theta} \mathcal{L}(\theta)) - \mathcal{L}(\theta)}}{\alpha} \cdot \delta, $$
+ \mathbb{J} \cdot \mathbb{v} \approx \frac{{\mathbb{L}(\theta - \alpha \delta \odot \nabla_{\theta} \mathbb{L}(\theta)) - \mathbb{L}(\theta)}}{\alpha} \cdot \delta, $$
 
 where:
-- $ \mathbf{J} $ represents the Jacobian matrix,
-- $ \mathbf{v} $ is the vector with which we compute the Jacobian-vector product,
+- $ \mathbb{J} $ represents the Jacobian matrix,
+- $ \mathbb{v} $ is the vector with which we compute the Jacobian-vector product,
 - $ \delta $ is a randomly chosen perturbation vector,
 - $ \odot $ denotes the element-wise product,
-- $ \mathcal{L}(\theta) $ is the loss function.
+- $ \mathbb{L}(\theta) $ is the loss function.
 
 This approach significantly reduces computational and memory overhead, making I-MAML suitable for meta-learning scenarios with limited resources.  By approximating the Jacobian using random perturbations and the inner product with the gradients, I-MAML avoids the need for explicit unrolling and differentiation of adaptation steps.
 
@@ -61,23 +61,23 @@ This approach significantly reduces computational and memory overhead, making I-
 I-MAML-NG further improves upon I-MAML by incorporating the natural gradient into the implicit differentiation process. The natural gradient considers the geometry of the parameter space and provides more effective updates. The update equation for I-MAML-NG is similar to I-MAML but involves the natural gradient computation:
 
 $$
-\theta' = \theta - \alpha \mathbf{F}^{-1} \nabla_{\theta} \mathcal{L}_{\text{val}}(f_{\theta})
+\theta' = \theta - \alpha \mathbb{F}^{-1} \nabla_{\theta} \mathbb{L}_{\text{val}}(f_{\theta})
 $$
 
-Here, $\mathbf{F}$ represents the Fisher information matrix, which captures the curvature of the loss landscape. This is calcuated as:
+Here, $\mathbb{F}$ represents the Fisher information matrix, which captures the curvature of the loss landscape. This is calcuated as:
 
-$$ \mathbf{F} = \mathcal{I}(\theta) = \mathbb{E}_{\mathcal{T} \sim p(\mathcal{T})} \left[ \nabla_{\theta} \mathcal{L}_{\mathcal{T}}(\theta) \nabla_{\theta} \mathcal{L}_{\mathcal{T}}(\theta)^T \right]$$
+$$ \mathbb{F} = \mathbb{I}(\theta) = \mathbb{E}_{\mathbb{T} \sim p(\mathbb{T})} \left[ \nabla_{\theta} \mathbb{L}_{\mathbb{T}}(\theta) \nabla_{\theta} \mathbb{L}_{\mathbb{T}}(\theta)^T \right]$$
 
 where 
 
 $$
 \begin{align*}
-\mathcal{I}(\theta) & : \text{Fisher Information matrix} \\
+\mathbb{I}(\theta) & : \text{Fisher Information matrix} \\
 \mathbb{E} & : \text{Expectation operator} \\
-\mathcal{T} & : \text{Task} \\
-p(\mathcal{T}) & : \text{Distribution of tasks} \\
+\mathbb{T} & : \text{Task} \\
+p(\mathbb{T}) & : \text{Distribution of tasks} \\
 \nabla_{\theta} & : \text{Gradient operator with respect to model parameters} \\
-\mathcal{L}_{\mathcal{T}}(\theta) & : \text{Loss function of task } \mathcal{T} \\
+\mathbb{L}_{\mathbb{T}}(\theta) & : \text{Loss function of task } \mathbb{T} \\
 \theta & : \text{Model parameters} \\
 \end{align*}
 $$
@@ -90,13 +90,13 @@ In the context of MAML (Model-Agnostic Meta-Learning), the Fisher Information ma
 I-MAML-HF improves upon I-MAML by utilizing a Hessian-Free approach. It approximates the Hessian matrix-vector product to efficiently compute the natural gradient. This approximation avoids the computationally expensive calculation of the Hessian matrix. The update equation for I-MAML-HF is similar to I-MAML-NG but involves the Hessian-Free approximation:
 
 $$
-\theta' = \theta - \alpha \mathbf{H}^{-1} \nabla_{\theta} \mathcal{L}_{\text{val}}(f_{\theta})
+\theta' = \theta - \alpha \mathbb{H}^{-1} \nabla_{\theta} \mathbb{L}_{\text{val}}(f_{\theta})
 $$
 
-Here, $\mathbf{H}$ represents the approximate Hessian matrix. The Hessian matrix, which represents the second-order derivatives of the loss function, is approximated by computing the Hessian-vector product, similar to $\delta$-approximating the Jacobian. 
+Here, $\mathbb{H}$ represents the approximate Hessian matrix. The Hessian matrix, which represents the second-order derivatives of the loss function, is approximated by computing the Hessian-vector product, similar to $\delta$-approximating the Jacobian. 
 
 $$
-\mathbf{H} \cdot \mathbf{v} \approx \frac{\nabla_{\theta} \mathcal{L}(\theta + \beta \mathbf{v}) - \nabla_{\theta} \mathcal{L}(\theta)}{\beta}
+\mathbb{H} \cdot \mathbb{v} \approx \frac{\nabla_{\theta} \mathbb{L}(\theta + \beta \mathbb{v}) - \nabla_{\theta} \mathbb{L}(\theta)}{\beta}
 $$
 
 where
