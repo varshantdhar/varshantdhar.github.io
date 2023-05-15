@@ -44,7 +44,8 @@ The $\delta$–approximate Jacobian-vector product can be formulated as follows:
 Mathematically, this can be expressed as:
 
 $$
- \mathbf{J} \cdot \mathbf{v} \approx \frac{{\mathcal{L}(\theta - \alpha \delta \odot \nabla_{\theta} \mathcal{L}(\theta)) - \mathcal{L}(\theta)}}{\alpha} \cdot \delta, $$
+ \mathbf{J} \cdot \mathbf{v} \approx \frac{\mathcal{L}(\theta - \alpha \delta \odot \nabla_{\theta} \mathcal{L}(\theta)) - \mathcal{L}(\theta)}{\alpha} \cdot \delta 
+$$
 
 where:
 - $ \mathbf{J} $ represents the Jacobian matrix,
