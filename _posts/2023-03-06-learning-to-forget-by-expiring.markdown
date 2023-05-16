@@ -17,13 +17,13 @@ Learns when to expire unneeded memories, by expiring memories that are no longer
 
 ### Method
 
-Taking the set $C_t = \{1, \cdots, t-1\}$ to indicate which memories can be accessed at time $t$ describes the space and time complexity of self-attention which is linearly correlated to the size of this set $|C_t|$. The paper's goal is to reduce the size of $C_t$ for more efficiency without performance degradation. Thus, for each memory $h_i \in \mathbb{R}^d$, they compute a scalar EXPIRE-SPAN $e_i \in [0, L]$ where 
+Taking the set $C_t = \{1, \cdots, t-1\}$ to indicate which memories can be accessed at time $t$ describes the space and time complexity of self-attention which is linearly correlated to the size of this set $|C_t|$. The paper's goal is to reduce the size of $C_t$ for more efficiency without performance degradation. Thus, for each memory $$ h_i \in \mathbb{R}^d $$, they compute a scalar EXPIRE-SPAN $e_i \in [0, L]$ where 
 
 $$ e_i = L\sigma(w^Th_i + b) $$
 
-where $w \in \mathbb{R}^d$ and $b \in \R$ represent trainable parameters and $\sigma$ is the sigmoid function with $L$ the maximum span. This expire-span $e_i$ determines how long $h_i$ should be kept and included in $C_t$. At time $t$, the remaining span of $h_i$ is $r_{ti} = e_i - (t-i)$ where $i$ represents the time step when the memory $h_i$ was originally stored. When $r_{ti}$ becomes negative, it indicates the memory $h_i$ is expired and can be removed from $C_t$.
+where $w \in \mathbb{R}^d$ and $b \in \mathbb{R}$ represent trainable parameters and $\sigma$ is the sigmoid function with $L$ the maximum span. This expire-span $e_i$ determines how long $h_i$ should be kept and included in $C_t$. At time $t$, the remaining span of $h_i$ is $r_{ti} = e_i - (t-i)$ where $i$ represents the time step when the memory $h_i$ was originally stored. When $r_{ti}$ becomes negative, it indicates the memory $h_i$ is expired and can be removed from $C_t$.
 
-This can be implemented by updating attention weights $a_{ti}$ with a binary masking function $m_{ti} = \mathbb{1}_{r_{ti} > 0}$
+This can be implemented by updating attention weights $a_{ti}$ with a binary masking function $m_{ti} = 1_{r_{ti} > 0}$
 
 $$ a^{'}_{ti} = \frac{m_{ti} a_{ti}}{\sum_j m_{tj}a_{tj}} $$
 
@@ -37,13 +37,18 @@ where $R$ is a parameter, bounded between $0$ and $1$, that determines the scali
 
 This function has gradient
 
-$$ \frac{{\partial m_{ti}}}{{\partial r_{ti}}} = 
-\begin{cases}
+$$
+\frac{{\partial m_{ti}}}{{\partial r_{ti}}} = 
+\left\{
+\begin{array}{ll}
 0, & \text{if } 1+ \frac{{r_{ti}}}{{R}} > 1 \\
 \frac{1}{R}, & \text{if } 1+ \frac{{r_{ti}}}{{R}} \leq 1 \\
-\end{cases} $$
+\end{array}
+\right.
+$$
 
-and thus has non-zero gradient for values in $[-R,0]$ to train $e_i$, but also can take a value of $0$ which is necessary for expiring memories. Thus $C_t = \{i | m_{ti} > 0 \}$. Since $m_{ti}$ is a monotonically decreasing function $t$, once a memory is expired, it can be permanently deleted. 
+
+and thus has non-zero gradient for values in $[-R,0]$ to train $e_i$, but also can take a value of $0$ which is necessary for expiring memories. Thus $$C_t = \{i : m_{ti} > 0 \}$$ Since $m_{ti}$ is a monotonically decreasing function $t$, once a memory is expired, it can be permanently deleted. 
 
 The ultimate goal is to reduce the average memory size, which directly relates with the average EXPIRE-SPAN:
 
