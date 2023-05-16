@@ -17,7 +17,7 @@ Learns when to expire unneeded memories, by expiring memories that are no longer
 
 ### Method
 
-Taking the set $C_t = \{1, \cdots, t-1\}$ to indicate which memories can be accessed at time $t$ describes the space and time complexity of self-attention which is linearly correlated to the size of this set $|C_t|$. The paper's goal is to reduce the size of $C_t$ for more efficiency without performance degradation. Thus, for each memory $$ h_i \in \mathbb{R}^d $$, they compute a scalar EXPIRE-SPAN $e_i \in [0, L]$ where 
+Taking the set $C_t = \{1, \cdots, t-1\}$ to indicate which memories can be accessed at time $t$ describes the space and time complexity of self-attention which is linearly correlated to the size of this set $|C_t|$. The paper's goal is to reduce the size of $C_t$ for more efficiency without performance degradation. Thus, for each memory $$ h_i \in \mathbb{R}^d $$  they compute a scalar EXPIRE-SPAN $e_i \in [0, L]$ where 
 
 $$ e_i = L\sigma(w^Th_i + b) $$
 
