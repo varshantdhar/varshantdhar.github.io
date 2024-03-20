@@ -26,8 +26,8 @@ As a recurrent connectivity matrix, $T$ represents purely feed-forward structure
 
 Now consider, generic RNN dynamics
 
-$$ h_{t+1} = \phi(V h_t + U x_{t+1} + b) $$
-$$ V = P\theta P^T, \space \theta = \Lambda + T
+$$ h_{t+1} = \phi(V h_t + U x_{t+1} + b) \newline
+ V = P\theta P^T, \space \theta = \Lambda + T
 $$
 
 where $h_t \in R^n$ $\phi$ is a nonlinear function. The Schur decomposition maps the hard problem of controlling the directions of a non-orthogonal basis to the easier problem of specifying interactions between fixed orthogonal modes. It is important to highlight the fact that an orthonormalization of the eigenbasis is just a change in representation and thus has no effect on the spectrum of $V$ which still lies on the diagonal of $\Lambda$. The lower-triangular matrix $T$ can thus be modified independently from the constraint that the spectrum have norms equal or near 1.
@@ -71,7 +71,7 @@ Enforcing orthogonality directly on the weight matrices might be too restrictive
 
 **Eigenvalue Variance Guarantee Principle (EVGP)**: having control over the eigenvalues of weight matrices in a neural network can lead to more stable and efficient training dynamics. Specifically, controlling the spread of eigenvalues can help avoid issues like vanishing or exploding gradients during training.
 
-**Unitary RNNs** are recurrent neural networks (RNNs) in which the recurrent weight matrices are constrained to be unitary matrices. A unitary matrix is a complex square matrix whose conjugate transpose is its inverse, meaning $U^*U=I$ where $U^*$ is the conjugate transpose of $U$. This is calculated by taking the transpose and then computing the complex conjugate of each element. 
+**Unitary RNNs** are recurrent neural networks (RNNs) in which the recurrent weight matrices are constrained to be unitary matrices. A unitary matrix is a complex square matrix whose conjugate transpose is its inverse, meaning $U^{*}U=I$ where $U^{*}$ is the conjugate transpose of $U$. This is calculated by taking the transpose and then computing the complex conjugate of each element. 
 
 * Skew-symmetric matrices are square matrices $A$ that satisfy the property $$A^T = -A$$
     * All diagonal elements are zero as they remain unchanged under transposition.
