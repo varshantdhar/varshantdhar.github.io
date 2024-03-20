@@ -51,7 +51,7 @@ For a given scalar-valued input sequence $x_t = s_t + \xi_t, t \in N$ composed o
 
 Taking $P(h_{:t}|s_{:t})$ as this model's likelihood, the corresponding Fisher information matrix that captures how $P(h_{:t}|s_{:t})$ changes with input $s_{:t}$ is
 
-$$ J_{k,l}(s_{:t}) = \langle -\frac{\delta^2}{\delta s_k \delta s_l} \log P(h_{:t} | s_{:t}) Rangle_{P(h_{:t}|s_{s:t})} \space \space k,l \leq t$$
+$$ J_{k,l}(s_{:t}) = \langle -\frac{\delta^2}{\delta s_k \delta s_l} \log P(h_{:t} | s_{:t}) \rangle_{P(h_{:t}|s_{s:t})} \space \space k,l \leq t$$
 
 The diagonal of theis matrix, $J(t) := J_{t,t}$ is called the Fisher memory curve (FMC) and has a simple interpretation: if a single signal $s_0$ is injected into the network at time 0, then $J(t)$ is the Fisher information that $h_t$ retains about this single signal. It has been proved that $\Theta_{\text{delay}}$  achieves the highest possible values for the FMC when $k \leq N$ but any strictly lower-triangular matrix may approach the performance of a delay line. 
 
