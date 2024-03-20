@@ -33,6 +33,31 @@ $$
 
 where $h_t \in \R^n$ $\phi$ is a nonlinear function. The Schur decomposition maps the hard problem of controlling the directions of a non-orthogonal basis to the easier problem of specifying interactions between fixed orthogonal modes. It is important to highlight the fact that an orthonormalization of the eigenbasis is just a change in representation and thus has no effect on the spectrum of $V$ which still lies on the diagonal of $\Lambda$. The lower-triangular matrix $T$ can thus be modified independently from the constraint that the spectrum have norms equal or near 1.
 
+
+### Non-normality drives expressive transients
+
+RNNs can be made more expressive with stronger fluctuations of hidden state dynamics. Consider a simplified linear case where $\phi(h_t) = h_t$ and $\Theta$ is parametrized as follows:
+
+$$ (\Theta)_{i, j} = d \delta_{i,j} + \alpha \delta_{i, j+1} + \beta \sum_{2 \leq k \leq i} \delta_{i, j+k} $$
+
+where diagonal entries are set to $d$, sub-diagonal entries to $\alpha$ and the remaining lower triange entries are set to $\beta$. 
+
+![alt]({{ site.url }}{{ site.baseurl }}/assets/images/lipschitz_non_normal_rnn/non_normality_rnn.png)
+
+### Non-normality allows for efficient information propagation
+
+Taking a simple example of a feed-forward structure is the local feed-forward chain where each mode feeds its signal only to the next mode in the chain ($\alpha > 0, \beta = 0, d = 0$) denoted as $\Theta_{\text{delay}}$. Signals feeding the first entry of $\Theta_{\text{delay}}$ propagate down the chain and are amplified or attenuated. Inputs from different time steps do not interact with each other. 
+
+For a given scalar-valued input sequence $x_t = s_t + \xi_t, t \in \N$ composed of a signal $s_t$ and injected noise $\xi_t$, the noise ensemble induces the conditional distribution $P(h_{:t} | s_{:t})$ over trajectories of hidden states, $h_{:t}$ where $:t$ is short hand for ($k : k \leq t$). 
+
+Taking $P(h_{:t}|s_{:t})$ as this model's likelihood, the corresponding Fisher information matrix that captures how $P(h_{:t}|s_{:t})$ changes with input $s_{:t}$ is
+
+$$ J_{k,l}(s_{:t}) = \langle -\frac{\delta^2}{\delta s_k \delta s_l} \log P(h_{:t} | s_{:t}) \rangle_{P(h_{:t}|s_{s:t})} \space \space k,l \leq t$$
+
+The diagonal of theis matrix, $J(t) := J_{t,t}$ is called the Fisher memory curve (FMC) and has a simple interpretation: if a single signal $s_0$ is injected into the network at time 0, then $J(t)$ is the Fisher information that $h_t$ retains about this single signal. It has been proved that $\Theta_{\text{delay}}$  achieves the highest possible values for the FMC when $k \leq N$ but any strictly lower-triangular matrix may approach the performance of a delay line. 
+
+The delay line with $\alpha > 1$ retains the most Fisher information across time up to time step $N$ when the nilpotency property of $\Theta$ erases all information ($\Theta^N \approx 0$). A non-zero $\beta$, which brings in more expressivity, does not significantly degrade the information propagation of the delay line. Further, the addition of diagonal terms ($d > 0$) helps to maintain optimal values of the FMC for $t < N$ while extending the memory beyond $t = N$. 
+
 ### Notes
 
 * For a real matrix (where all elements are real numbers), the conjugate transpose is simply the same as the transpose since the complex conjugate of a real number is the number itself.
