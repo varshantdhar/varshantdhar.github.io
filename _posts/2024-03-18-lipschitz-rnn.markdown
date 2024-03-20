@@ -26,12 +26,11 @@ As a recurrent connectivity matrix, $T$ represents purely feed-forward structure
 
 Now consider, generic RNN dynamics
 
-$$ h_{t+1} = \phi(V h_t + U x_{t+1} + b) 
-\newline 
-V = P\theta P^T, \space \theta = \Lambda + T
+$$ h_{t+1} = \phi(V h_t + U x_{t+1} + b) $$
+$$ V = P\theta P^T, \space \theta = \Lambda + T
 $$
 
-where $h_t \in \R^n$ $\phi$ is a nonlinear function. The Schur decomposition maps the hard problem of controlling the directions of a non-orthogonal basis to the easier problem of specifying interactions between fixed orthogonal modes. It is important to highlight the fact that an orthonormalization of the eigenbasis is just a change in representation and thus has no effect on the spectrum of $V$ which still lies on the diagonal of $\Lambda$. The lower-triangular matrix $T$ can thus be modified independently from the constraint that the spectrum have norms equal or near 1.
+where $h_t \in R^n$ $\phi$ is a nonlinear function. The Schur decomposition maps the hard problem of controlling the directions of a non-orthogonal basis to the easier problem of specifying interactions between fixed orthogonal modes. It is important to highlight the fact that an orthonormalization of the eigenbasis is just a change in representation and thus has no effect on the spectrum of $V$ which still lies on the diagonal of $\Lambda$. The lower-triangular matrix $T$ can thus be modified independently from the constraint that the spectrum have norms equal or near 1.
 
 
 ### Non-normality drives expressive transients
@@ -48,11 +47,11 @@ where diagonal entries are set to $d$, sub-diagonal entries to $\alpha$ and the 
 
 Taking a simple example of a feed-forward structure is the local feed-forward chain where each mode feeds its signal only to the next mode in the chain ($\alpha > 0, \beta = 0, d = 0$) denoted as $\Theta_{\text{delay}}$. Signals feeding the first entry of $\Theta_{\text{delay}}$ propagate down the chain and are amplified or attenuated. Inputs from different time steps do not interact with each other. 
 
-For a given scalar-valued input sequence $x_t = s_t + \xi_t, t \in \N$ composed of a signal $s_t$ and injected noise $\xi_t$, the noise ensemble induces the conditional distribution $P(h_{:t} | s_{:t})$ over trajectories of hidden states, $h_{:t}$ where $:t$ is short hand for ($k : k \leq t$). 
+For a given scalar-valued input sequence $x_t = s_t + \xi_t, t \in N$ composed of a signal $s_t$ and injected noise $\xi_t$, the noise ensemble induces the conditional distribution $P(h_{:t} | s_{:t})$ over trajectories of hidden states, $h_{:t}$ where $:t$ is short hand for ($k : k \leq t$). 
 
 Taking $P(h_{:t}|s_{:t})$ as this model's likelihood, the corresponding Fisher information matrix that captures how $P(h_{:t}|s_{:t})$ changes with input $s_{:t}$ is
 
-$$ J_{k,l}(s_{:t}) = \langle -\frac{\delta^2}{\delta s_k \delta s_l} \log P(h_{:t} | s_{:t}) \rangle_{P(h_{:t}|s_{s:t})} \space \space k,l \leq t$$
+$$ J_{k,l}(s_{:t}) = \langle -\frac{\delta^2}{\delta s_k \delta s_l} \log P(h_{:t} | s_{:t}) Rangle_{P(h_{:t}|s_{s:t})} \space \space k,l \leq t$$
 
 The diagonal of theis matrix, $J(t) := J_{t,t}$ is called the Fisher memory curve (FMC) and has a simple interpretation: if a single signal $s_0$ is injected into the network at time 0, then $J(t)$ is the Fisher information that $h_t$ retains about this single signal. It has been proved that $\Theta_{\text{delay}}$  achieves the highest possible values for the FMC when $k \leq N$ but any strictly lower-triangular matrix may approach the performance of a delay line. 
 
