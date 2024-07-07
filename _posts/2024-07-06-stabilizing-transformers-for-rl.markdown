@@ -31,7 +31,7 @@ Transformers have been shown to be more performant as a mechnism for attention o
 
 The use of "Identity Map Reordering" where layer normalization is moved onto the "skip" stream of the residual connection enables an identity map from the input of the transformer at the first layer to the output of the transformer after the last layer. In contrast, the canonical transformer, which consists of a series of layer normalization operations that non-linearly transform the state encoding. 
 
-Identity Map Reordering allows for the agent to learn a Markovian policy at the start of training when the submodules at initialization produce values that are in expectation near zero. The state encoding is passed untransformed to the policy and value heads allowing for $ \pi(\cdot | s_t, \cdots, s_1) = \pi(\cdot | s_t) $ and $ V^{\pi} (s_t | s_{t-1}, \cdots, s_1) = V^{\pi} (s_t | s_{t-1}) $
+Identity Map Reordering allows for the agent to learn a Markovian policy at the start of training when the submodules at initialization produce values that are in expectation near zero. The state encoding is passed untransformed to the policy and value heads allowing for $ \pi(\cdot | s_t, \cdots, s_1) \approx \pi(\cdot | s_t) $ and $ V^{\pi} (s_t | s_{t-1}, \cdots, s_1) \approx V^{\pi} (s_t | s_{t-1}) $
 
 Layer normalization would scale down the information flowing through the skip connection, forcing the model to rely on the residual path. Reactive behaviors need to be learned before memory-based ones can be effectively utilized, leading to instability in effectively estimating the value and policy functions using the original Transformer. 
 
