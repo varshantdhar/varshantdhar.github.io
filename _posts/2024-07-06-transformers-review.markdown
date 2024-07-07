@@ -150,4 +150,54 @@ Multi-head attention jointly attends information from different representation s
 $$ \text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \cdots, \text{head}_h)W^{O} $$
 where $\text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)$ and where $W_i^Q \in \mathbb{R}^{d_{\text{model}} \times d_k}$, $W_i^K \in \mathbb{R}^{d_{\text{model}} \times d_k}$, $W_i^V \in \mathbb{R}^{d_{\text{model}} \times d_v}$ and $W^O \in \mathbb{R}^{d_{hd_v \times \text{model}}}$
 
+## Embeddings and Softmax
+
+Learned embeddings are used to convert the input tokens and output tokens to vectors of dimension $d_{\text{model}}$. The learned linear transformation and softmax function are used to convert the decoder output to predicted next-token probabilities. Often, we share the same weight matrix between the two embeddings layers and pre-softmax linear transformation, multiplying those weights by $\sqrt{d_{\text{model}}}$
+
+```{python}
+class Embeddings(nn.Module):
+    def __init__(self, d_model, vocab):
+        super(Embeddings, self).__init__()
+        self.lut = nn.Embedding(vocab, d_model)
+        self.d_model = d_model
+
+    def forward(self, x):
+        return self.lut(x) * math.sqrt(self.d_model)
+```
+
 ### Positional Encodings: Using sinusoidal functions to inject the order of words in our model
+
+Positional encodings adds information to each word about its position in the sentence. We can't use the $[0,1]$ range in which $0$ means the first word and $1$ means the last time-step as the time-step delta won't have consistent meaning across different sentences. 
+
+If we assign a number to each time-step linearly, not only would the positional values get quite large but also the moel can face sentences longer than the ones in training -- thus our model may not see any sample with a speicifc length which would hurt generalization. 
+
+Thus, the proposed technique employs a $d$-dimensional vector that is not integrated with the model itself. Let $t$ be the desired position in an input sentence, $\hat{p}_t \in \mathbb{R}^d$ be its corresponding encoding and $d$ be the encoding dimension, then $f: \mathbb{N} \rightarrow \mathbb{R}^d$ will be the function that produces the output vector $\hat{p}$ and it is defined as follows
+
+$$ \hat{p}_t^{(i)} = f(t)^{(i)} := \begin{cases} \sin(\omega_k \cdot t) & \text{if } i = 2k \\ \cos(\omega_k \cdot t) & \text{if } i = 2k + 1 \end{cases} $$
+
+where 
+
+$$\omega_k = \frac{1}{10000^{\frac{2k}{d}}} $$
+
+From the function definition, the frequencies are decreasing along the vector dimension. Thus, it forms a geometric progression from $2\pi$ to $10000 \cdot 2\pi$ on the wavelengths. This can also be visualised as
+
+$$ \hat{p}_t = \begin{bmatrix}
+\sin(\omega_1 \cdot t) \\ \cos(\omega_1 \cdot t) \\ \\
+\sin(\omega_2 \cdot t) \\ \cos(\omega_2 \cdot t) \\
+\vdots \\
+\sin(\omega_{\frac{d}{2}} \cdot t) \\ \cos(\omega_{\frac{d}{2}} \cdot t) \\
+\end{bmatrix}_{d \times 1} $$
+
+where $d$ must be divisible by 2
+
+## Notes
+
+### Xavier (Glorot) Initialization
+
+The Xavier initialization method, proposed by Xavier Glorot and Yoshua Bengio, aims to maintain the variance of activations and gradients across layers, which helps in preventing the issues of vanishing and exploding gradients. The method is designed to keep the scale of the gradients roughly the same in all layers.
+
+The Xavier uniform initialization sets the weights according to the following formula:
+
+$$ W \sim U(- \frac{\sqrt{6}}{\sqrt{n_{\text{in}}} + \sqrt{n_{\text{out}}}}, \frac{\sqrt{6}}{\sqrt{n_{\text{in}}} + \sqrt{n_{\text{out}}}}) $$
+
+where $n_{\text{in}}$ is the number of input units and $n_{\text{out}}$ is the number of output units. 
