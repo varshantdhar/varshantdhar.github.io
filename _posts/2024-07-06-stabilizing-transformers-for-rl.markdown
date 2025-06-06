@@ -42,7 +42,44 @@ Changing the original Transformer to only place the layer normalization on the i
 ![alt]({{ site.url }}{{ site.baseurl }}/assets/images/gated-transformer/trxl.png)
 
 
+### Gating Layers
 
+Further improvements in performance and opitmization stability can come from replacing the residual connections with gating layers, building a Gated Transformer (GTrXL).
 
+The original transformer with Identity Map Reordering formulates as follows
 
+$$ \bar{Y}^{(l)} = \text{RelativeMultiHeadAttention}(\text{LayerNorm}([\text{StopGrad}(M^{(l-1)}), E^{(l-1)}])) $$
+$$ Y^{(l)} = E^{(l-1)} + \text{ReLU}(\bar{Y}^{(l)}) $$
+$$ \bar{E}^{(l)} = f^{(l)}(\text{LayerNorm}(Y^{(l)})) $$
+$$ E^{(l)} = Y^{(l)} + \text{ReLU}(\bar{E}^{(l)}) $$
 
+With Gating layers this now looks like
+
+$$ \bar{Y}^{(l)} = \text{RelativeMultiHeadAttention}(\text{LayerNorm}([\text{StopGrad}(M^{(l-1)}), E^{(l-1)}])) $$
+$$ Y^{(l)} = g_{\text{MultiHeadedAttention}}^{(l)}(E^{(l)}, \text{ReLU}(\bar{Y}^{(l)})) $$
+$$ \bar{E}^{(l)} = f^{(l)}(\text{LayerNorm}(Y^{(l)})) $$
+$$ E^{(l)} = g_{\text{MLP}}^{(l)}(Y^{(l)}, \text{ReLU}(\bar{E}^{(l)})) $$
+
+where $g$ is a gating layer function. A variety of gating layers can be employed with increasing expressivity:
+
+- The gated input connection has a sigmoid modeulation on the input stream
+
+$$ g^{(l)}(x,y) = \sigma(W_g^{(l)}x) \odot x + y $$
+
+- The gated output connection has a sigmoid modulation on the output stream:
+
+$$ g^{(l)}(x, y) = x + \sigma(W_g^{(l)}x - b_g^{(l)}) \odot y $$
+
+- The highway connection modulates both streams with a sigmoid:
+
+$$ g^{(l)}(x, y) = \sigma(W_g^{(l)}x + b_g^{(l)}) \odot x + (1 - \sigma(W_g^{(l)}x + b_g^{(l)})) \odot y $$
+
+- The sigmoid-tanh gate is similar to the Output gate but with an additional tanh activation on the output stream:
+
+$$ g^{(l)}(x, y) = x + \sigma(W_g^{(l)}y - b) \odot \tanh(U_g^{(l)}y) $$
+
+- Gated-Recurrent-Unit type gating is a recurrent network that performs similarly to an LSTM but has fewer parameters. 
+
+$$ r = \sigma(W_r^{(l)}y + U_r^{(l)}x), z = \sigma(W_z^{(l)} + U_z^{(l)}x - b_g^{(l)}) $$
+$$ h = \tanh(W_g^{(l)}y + U_g^{(l)}(r \odot x)) $$
+$$ g^{(l)}(x,y) = (1 - z) \odot x + z \odot h $$
