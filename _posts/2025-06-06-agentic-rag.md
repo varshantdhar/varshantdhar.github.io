@@ -12,9 +12,7 @@ tags:
     - LangGraph
 ---
 
-## Building the RAG Foundation – Extract, Chunk, Embed, Retrieve
-
-These steps are foundational to any RAG (retrieval-augmented generation) system because they prepare unstructured data for efficient semantic querying and LLM-based reasoning.
+Building the RAG Foundation – Extract, Chunk, Embed, Retrieve. These steps are foundational to any RAG (retrieval-augmented generation) system because they prepare unstructured data for efficient semantic querying and LLM-based reasoning.
 
 ### Step 1: Extracting from PDF
 In real-world workflows, academic documents are rarely clean HTML or Markdown — they're often scanned or typeset PDFs. We need to extract readable, clean text from these formats. I chose `pdfplumber` for its reliable layout handling and ability to preserve mathematical structure like equation indentation and paragraph flow.
