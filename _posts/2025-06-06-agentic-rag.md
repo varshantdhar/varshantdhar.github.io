@@ -40,6 +40,12 @@ splitter = RecursiveCharacterTextSplitter(
 ```
 The overlap is key for math — it ensures formulas, definitions, or proofs don’t get sliced apart across chunks. Chunking is an essential preprocessing step that bridges document structure and vector-based search.
 
+Alternatives to the method we put in place are
+
+- Fixed window sliding: Fast, but slices formulas and paragraphs mid-thought
+- Sentence-based chunking: May be too granular for derivations/proofs
+- Markdown/Heading-based chunking: Great for structured docs, but academic PDFs rarely have clean headers
+- Semantic chunking (e.g., TextTiling): tries to segment a document where the topic shifts, not just where a sentence or paragraph ends.
 
 ### Step 3: Embedding with Sentence Transformers
 To retrieve chunks relevant to a user query, we need a way to compare their meanings. This is where embeddings come in — high-dimensional vector representations that encode semantic similarity. I used `sentence-transformers/all-MiniLM-L6-v2` to convert each chunk into a 384-dimensional vector:
@@ -48,7 +54,11 @@ To retrieve chunks relevant to a user query, we need a way to compare their mean
 model = SentenceTransformer("all-MiniLM-L6-v2")
 embeddings = model.encode(chunks)
 ```
-Embeddings allow us to compute cosine similarity between a user query and each chunk, enabling relevance-ranked retrieval.
+Embeddings allow us to compute cosine similarity between a user query and each chunk, enabling relevance-ranked retrieval. Traditional search (e.g., TF-IDF, keyword search, BM25) fails when:
+- The query uses synonyms or paraphrasing.
+- The content uses math/technical language where keyword overlap is low.
+
+Semantic embeddings let us compare meaning, not just text.
 
 ### Step 4: Store in FAISS
 We store all the embeddings in a FAISS index — an optimized library for fast similarity search. This allows us to perform vector-based nearest neighbor lookups across potentially thousands of chunks, all in milliseconds:
@@ -60,3 +70,4 @@ faiss.write_index(index, "vectorstore/faiss.index")
 ```
 In addition to the index, we also save the original chunks using `pickle`, so that when a query returns a match, we can return the corresponding text directly. Think of this as building a searchable library of ideas and definitions, where every entry is semantically indexed.
 
+We use the brute-force IndexFlatL2 which is a brute force indexing method that computes similarities with all the other vectors in the index. This is not scalable but would work for our pdfs. 
