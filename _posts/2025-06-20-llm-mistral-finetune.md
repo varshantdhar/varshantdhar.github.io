@@ -32,7 +32,15 @@ We load the Mistral-7B-Instruct-v0.2 model, which is specifically designed for i
 
 #### Quantization Strategy
 
-The model is loaded in 4-bit quantized mode using bitsandbytes, which dramatically reduces memory requirements from approximately 14GB to around 4GB. This quantization is essential for training on consumer hardware while maintaining reasonable performance. We use bfloat16 precision for better numerical stability compared to float16, especially important for training stability.
+The model is loaded in 4-bit quantized mode using [bitsandbytes](https://github.com/bitsandbytes-foundation/bitsandbytes), a CUDA kernel library that replaces weight matrices with compressed formats like NF4 (Normalized Float 4-bit). This dramatically reduces memory requirements from approximately 14GB to around 4GB. 
+
+This quantization is essential for training on consumer hardware while maintaining reasonable performance. We use bfloat16 precision for better numerical stability compared to float16, especially important for training stability.
+
+Like float16, it uses 16 bits per number, but:
+- 8 bits for exponent (like float32)
+- 7 bits for mantissa (lower resolution)
+
+This gives it wider dynamic range than float16 (which has 5-bit exponent), avoiding NaNs or overflow during training.
 
 #### LoRA Configuration
 
