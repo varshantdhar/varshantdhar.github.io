@@ -16,7 +16,7 @@ I'm [working on](https://github.com/varshantdhar/llm-finetuning-mistral) fine-tu
 
 ## Training Process Overview
 
-The training script implements a comprehensive fine-tuning pipeline for instruction-following tasks. Here's a detailed walkthrough of each step and the reasoning behind our parameter choices:
+The training script implements a comprehensive fine-tuning pipeline for instruction-following tasks. Here's a detailed walkthrough of each step and the reasoning behind the parameter choices:
 
 ### Dataset Selection and Loading
 
@@ -48,7 +48,7 @@ Text is tokenized with a maximum sequence length of 512 tokens, which balances c
 
 ### Training Configuration
 
-Our training parameters are optimized for efficient fine-tuning:
+The training parameters are optimized for efficient fine-tuning:
 - **Batch Size**: Set to 1 per device with gradient accumulation over 8 steps, creating an effective batch size of 8. This approach allows training on limited GPU memory while maintaining stable gradient estimates.
 - **Learning Rate**: 2e-4 provides a good balance between learning speed and stability for LoRA fine-tuning.
 - **Epochs**: 3 epochs allow sufficient learning without overfitting on the 1,000-example dataset.
