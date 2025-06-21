@@ -1,5 +1,5 @@
 ---
-title:  "Agentic RAG for Graduate Math & Statistics"
+title:  "RAG Foundation - Extract, Chunk, Embed and Retrieve"
 date:   2025-06-06
 mathjax: true
 categories:
