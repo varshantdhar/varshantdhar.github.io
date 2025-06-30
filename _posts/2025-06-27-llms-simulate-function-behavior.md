@@ -19,7 +19,9 @@ This capacity is rooted in the architecture of transformers. Transformers are fu
 Consider a prompt like:
 
 ```python
-def multiply(a, b): return a * b
+def multiply(a, b): 
+    return a * b
+
 multiply(3, 4)
 ```
 
