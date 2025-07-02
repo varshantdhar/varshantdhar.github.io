@@ -37,3 +37,51 @@ If you naively all-reduced each parameter the moment its gradient arrived, you�
 3. Firing once per bucket: only when all grads in that bucket have been populated you issue a single ```dist.all_reduce(bucket_grads, async_op=True)``` over the contiguous block.
 
 This turns N small all-reduces into $\lceil N / B \rceil$ all-reduces which makes overlapping with backward compute much more effective.
+
+Worth noting, the reducing order must be the same across all processes, otherwise, ```AllReduce``` contents might mismatch, resulting in incorrect reduction result. PyTorch dynamically builds the autograd graph in every forward pass, and different processes might not agree on the gradient ready order. Even if individual parameters’ grads arrive “out of order” during backprop, PyTorch holds off until the bucket is complete before issuing that bucket’s collective.
+
+### Pseudocode
+
+Algorithm 1: DistributedDataParallel
+Input: Process rank r, bucket size cap c, local model net
+```
+  Function constructor(net):
+     if r=0 then
+        broadcast net states to other processes
+     init buckets, allocate parameters to buckets in the
+       reverse order of net.parameters()
+     for p in net.parameters() do
+        acc ← p.grad accumulator
+        acc → add post hook(autograd hook)
+```
+
+Rank 0 holds the source of truth as it broadcasts every model parameter tensor (```p.data```) to all ranks so that each replica begins in the identical state. For ```net.parameters()``` it is walked through in reverse order so later layers' grads can be synced sooner and group them into contiguous buckets of size $\leq c$. For each parameter ```p```, grab its underlying gradient accumulator and register a post-accumulate-grad hook. That hook will fire immediately when ```p.grad``` is populated during ```backward()```.
+
+```
+  Function forward(inp):
+    out = net(inp)
+    traverse autograd graph from out and mark
+       unused parameters as ready
+    return out
+```
+
+No change in the forward pass. Then walk the autograd graph from the outputs to find which parameters participate in this iteration's backward (to handle conditionally-skiped layers). Any parameter not in the graph is "marked ready" so its bucket does not deadlock. 
+
+```
+  Function autograd hook(param index):
+    get bucket bᵢ and bucket offset using param index
+    get parameter var using param index
+    view ← bᵢ.narrow(offset, var.size())
+    view.copy(var.grad)
+    if all grads in bᵢ are ready then
+       mark bᵢ as ready
+       launch AllReduce on ready buckets in order
+    if all buckets are ready then
+       block waiting for all AllReduce ops
+```
+
+Each hook knows which bucket $b_i$ its parameter belongs to and where in that bucket to write. It copies ```p.grad``` into the correct slice of a flattened bucket tensor.
+A per-bucket counter tracks how many params have arrived. The bucket is "ready" once the last grad for $b_i$ is in. 
+For every bucket that’s now ready—and in strictly increasing bucket index order—DDP issues an asynchronous All-Reduce (```dist.all_reduce(async_op=True)```) over that entire bucket tensor.
+After the backward is fully done, DDP waits (```.wait()```) on any in-flight communication handles to ensure all reductions have completed before ```optimizer.step()``` runs.
+After all All-Reduce operations finish, the reduced values already live in the bucket tensor. PyTorch then maps them back into each parameter’s ```.grad``` field before the optimizer update.
