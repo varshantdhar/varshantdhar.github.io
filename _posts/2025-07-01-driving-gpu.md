@@ -18,9 +18,8 @@ Another popular technique is parameter averaging which instead of synchronizing 
 
 $$ \hat{g} = \frac{1}{N} \sum_{i=1}^N \triangledown L_i (\theta) $$
 
-Each process then 
 
- This comes with costs
+This comes with costs
 
 - Parameter averaging produces vastly different results compared to local training especially when the optimizer relies on past local gradients values.
 - As different model replicas see different gradients, the states in optimizers can gradually diverge, causing conflicting gradient descent directions.
